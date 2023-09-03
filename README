@@ -1,0 +1,15 @@
+	Retin adresa de memorie la care este generat un pagefault. Imi declar o variabila globala statica "file_path" si in functia so_execute mi-o initializez cu calea fisierului executabil pentru a putea deschide si copia din fisier datele in paginile pe care le mapez.
+	Primul pas este sa vedem in ce segment se afla adresa de memorie la care este generat pagefaultul. Fac un for si trec prin fiecare segment. Tot in for, ma folosesc de variabila globala "ok1" pentru a imi aloca (o singura data) memorie in campul data al fiecarui segment pentru un vector de int-uri de lungime = numarul total de pagini dintr-un segment care vor contine date din executabil si/sau zero. Pentru fiecare segment voi retine in vector daca o pagina a fost mapata (pe pozitia index_pagina pun valoarea 1) sau nu (pe pozitia index_pagina pun valoarea 0). Daca adresa de memorie la care este generat pagefaultul nu se afla in niciun segment cunoscut, avem acces invalid la memorie si functia signal va aplica actiunea default asociata semnalului SIGSEGV. Daca gasim segmentul, pastrez indicele lui in variabila "segment_number".
+	Al doilea pas este sa calculez indicele paginii din segmentul in care este generat pagefaultul.
+Imi declar variabila "write_from_file" care determina cat trebuie sa scriu din executabil : o pagina intreaga (daca write_from_file >= pagesize) sau partiala (daca write_from_file < pagesize). Imi declar variabila "write_from_offset" in care retin de la ce offset scriu din executabil. In "mapped_from_address" retin adresa de inceput a paginii gasite mai devreme.
+	Al treilea pas este sa vad, in functie de unde se afla pagina in memorie, ce trebuie scrisa in ea (date din fisier sau/si zero).
+	Daca pagina a fost deja mapata, avem acces nepermis la memorie si apelez functia signal. Daca nu a fost mapata, atunci am 2 cazuri.
+Caz 1: daca se afla printre paginile in care trebuie copiate date din fisier, atunci:
+ 	- fie toata pagina contine date din fisier
+ 	- fie doar o parte din pagina contine date din fisier, restul nu conteaza (nu am bss, file_size = mem_size)
+ 	- fie pagina contine si date din fisier si zerouri (cat mai am pana la mem_size)
+
+Caz 2: daca se afla printre paginile care trebuie zerorizate
+	- in functia mmap voi folosi flagul MAP_ANONYMOUS care imi initializeaza cu 0 pagina
+
+	La final folosesc functia mprotect pentru ca pagina mapata sa aiba permisiunile segmentului
