@@ -2,7 +2,7 @@
 Objectives
 --
 - delve into how an executable is loaded and run by the Operating System
-- getting used to working with **memory exceptions** on an OS
+- getting used to working with **memory exceptions** on an 32-bit OS
 - using the Linux API to work with **address space, virtual memory and demand paging**
 
 Overview
