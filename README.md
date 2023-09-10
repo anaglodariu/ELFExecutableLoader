@@ -7,7 +7,7 @@ Objectives
 
 Overview
 --
-Implementing an **ELF loader for Linux** as a **shared/dynamic library**. The loader
+Implementing an **ELF Executable loader for Linux** as a **shared/dynamic library**. The loader
 will load the executable into memory page by page using a demand paging mechanism 
 (a page will only be loaded when it is needed). For simplicity, the loader will only run
 **static executables**, which are not linked with shared/dynamic libraries.
